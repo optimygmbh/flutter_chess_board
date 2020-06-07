@@ -15,6 +15,12 @@ class ChessBoardController {
   /// Function from the ScopedModel to refresh board
   Function refreshBoard;
 
+  /// Makes move on the board with San String
+  void makeMoveSAN(String san) {
+    game?.move(san);
+    refreshBoard == null ? this._throwNotAttachedException() : refreshBoard();
+  }
+
   /// Makes move on the board
   void makeMove(String from, String to) {
     game?.move({"from": from, "to": to});

@@ -14,52 +14,62 @@ class BoardSquare extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<BoardModel>(builder: (context, _, model) {
-      return Expanded(
-        flex: 1,
-        child: DragTarget(builder: (context, accepted, rejected) {
-          return model.game.get(squareName) != null
-              ? Draggable(
-                  child: _getImageToDisplay(size: model.size / 8, model: model),
-                  feedback: _getImageToDisplay(
-                      size: (1.2 * (model.size / 8)), model: model),
-                  onDragCompleted: () {},
-                  data: [
-                    squareName,
-                    model.game.get(squareName).type.toUpperCase(),
-                    model.game.get(squareName).color,
-                  ],
-                )
-              : Container();
-        }, onWillAccept: (willAccept) {
-          return model.enableUserMoves ? true : false;
-        }, onAccept: (List moveInfo) {
-          // A way to check if move occurred.
-          chess.Color moveColor = model.game.turn;
+    return ScopedModelDescendant<BoardModel>(
+      builder: (context, _, model) {
+        return Expanded(
+          flex: 1,
+          child: DragTarget(
+            builder: (context, accepted, rejected) {
+              return model.game.get(squareName) != null
+                  ? Draggable(
+                      child: _getImageToDisplay(
+                          size: model.size / 8, model: model),
+                      feedback: _getImageToDisplay(
+                          size: (1.2 * (model.size / 8)), model: model),
+                      onDragCompleted: () {},
+                      data: [
+                        squareName,
+                        model.game.get(squareName).type.toUpperCase(),
+                        model.game.get(squareName).color,
+                      ],
+                    )
+                  : Container();
+            },
+            onWillAccept: (willAccept) {
+              return model.enableUserMoves ? true : false;
+            },
+            onAccept: (List moveInfo) async {
+              // A way to check if move occurred.
+              chess.Color moveColor = model.game.turn;
 
-          if (moveInfo[1] == "P" &&
-              ((moveInfo[0][1] == "7" &&
-                      squareName[1] == "8" &&
-                      moveInfo[2] == chess.Color.WHITE) ||
-                  (moveInfo[0][1] == "2" &&
-                      squareName[1] == "1" &&
-                      moveInfo[2] == chess.Color.BLACK))) {
-            _promotionDialog(context).then((value) {
-              model.game.move(
-                  {"from": moveInfo[0], "to": squareName, "promotion": value});
+              if (moveInfo[1] == "P" &&
+                  ((moveInfo[0][1] == "7" &&
+                          squareName[1] == "8" &&
+                          moveInfo[2] == chess.Color.WHITE) ||
+                      (moveInfo[0][1] == "2" &&
+                          squareName[1] == "1" &&
+                          moveInfo[2] == chess.Color.BLACK))) {
+                final promotion = await _promotionDialog(context);
+                model.game.move(
+                  {
+                    "from": moveInfo[0],
+                    "to": squareName,
+                    "promotion": promotion,
+                  },
+                );
+              } else {
+                model.game.move({"from": moveInfo[0], "to": squareName});
+              }
+              if (model.game.turn != moveColor) {
+                final history = model.game.getHistory();
+                model.onMove((history as List).last);
+              }
               model.refreshBoard();
-            });
-          } else {
-            model.game.move({"from": moveInfo[0], "to": squareName});
-          }
-          if (model.game.turn != moveColor) {
-            model.onMove(
-                moveInfo[1] == "P" ? squareName : moveInfo[1] + squareName);
-          }
-          model.refreshBoard();
-        }),
-      );
-    });
+            },
+          ),
+        );
+      },
+    );
   }
 
   /// Show dialog when pawn reaches last square

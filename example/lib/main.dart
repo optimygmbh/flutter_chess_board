@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chess_board/src/chess_board.dart';
+import 'package:flutter_chess_board/flutter_chess_board.dart';
 
 void main() => runApp(new MyApp());
 
@@ -23,10 +23,25 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  ChessBoardController chessBoardController;
+
+  @override
+  void initState() {
+    chessBoardController = ChessBoardController();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: Icon(Icons.access_alarm),
+            onPressed: () => chessBoardController.makeMoveSAN('d5'),
+          )
+        ],
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -44,6 +59,8 @@ class _MyHomePageState extends State<MyHomePage> {
               onDraw: () {},
               size: MediaQuery.of(context).size.width,
               enableUserMoves: true,
+              boardType: BoardType.green,
+              chessBoardController: chessBoardController,
             )
           ],
         ),
