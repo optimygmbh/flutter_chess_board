@@ -98,6 +98,11 @@ class ChessBoardController {
         : boardModel.stepToFront();
   }
 
+  void undoMove() {
+    boardModel == null ? this._throwNotAttachedException() : game.undo_move();
+    boardModel.refreshBoard();
+  }
+
   List<String> get history {
     if (boardModel == null) {
       return [];
