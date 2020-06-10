@@ -25,6 +25,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   ChessBoardController chessBoardController;
 
+  final movesOnlyThroughController = true;
+
   @override
   void initState() {
     chessBoardController = ChessBoardController();
@@ -52,6 +54,9 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             ChessBoard(
               onMove: (move) {
+                if (movesOnlyThroughController) {
+                  chessBoardController.makeMoveSAN(move);
+                }
                 print(move);
               },
               onCheck: (color) {
@@ -65,7 +70,27 @@ class _MyHomePageState extends State<MyHomePage> {
               enableUserMoves: true,
               boardType: BoardType.green,
               chessBoardController: chessBoardController,
-            )
+              movesOnlyThroughController: movesOnlyThroughController,
+            ),
+            Row(
+              children: [
+                RaisedButton(
+                  child: Icon(Icons.arrow_back),
+                  onPressed: () =>
+                      setState(() => chessBoardController.stepBack()),
+                ),
+                RaisedButton(
+                  child: Icon(Icons.arrow_forward),
+                  onPressed: () =>
+                      setState(() => chessBoardController.stepForward()),
+                ),
+                RaisedButton(
+                  child: Icon(Icons.subdirectory_arrow_right),
+                  onPressed: () =>
+                      setState(() => chessBoardController.stepFront()),
+                ),
+              ],
+            ),
           ],
         ),
       ),

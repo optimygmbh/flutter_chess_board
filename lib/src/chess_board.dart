@@ -124,6 +124,9 @@ class ChessBoard extends StatefulWidget {
   /// The color type of the board
   final BoardType boardType;
 
+  /// Moves can only be done through the controller
+  final bool movesOnlyThroughController;
+
   ChessBoard({
     this.size = 200.0,
     this.whiteSideTowardsUser = true,
@@ -134,6 +137,7 @@ class ChessBoard extends StatefulWidget {
     this.chessBoardController,
     this.enableUserMoves = true,
     this.boardType = BoardType.brown,
+    this.movesOnlyThroughController = false,
   });
 
   @override
@@ -154,8 +158,22 @@ class _ChessBoardState extends State<ChessBoard> {
       widget.whiteSideTowardsUser,
       widget.chessBoardController,
       widget.enableUserMoves,
+      widget.movesOnlyThroughController,
     );
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(ChessBoard oldWidget) {
+    boardModel.size = widget.size;
+    boardModel.onMove = widget.onMove;
+    boardModel.onCheckMate = widget.onCheckMate;
+    boardModel.onCheck = widget.onCheck;
+    boardModel.onDraw = widget.onDraw;
+    boardModel.whiteSideTowardsUser = widget.whiteSideTowardsUser;
+    boardModel.enableUserMoves = widget.enableUserMoves;
+    boardModel.movesOnlyThroughController = widget.movesOnlyThroughController;
+    super.didUpdateWidget(oldWidget);
   }
 
   @override

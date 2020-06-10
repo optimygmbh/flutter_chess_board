@@ -20,20 +20,24 @@ class BoardSquare extends StatelessWidget {
           flex: 1,
           child: DragTarget(
             builder: (context, accepted, rejected) {
-              return model.game.get(squareName) != null
-                  ? Draggable(
-                      child: _getImageToDisplay(
-                          size: model.size / 8, model: model),
-                      feedback: _getImageToDisplay(
-                          size: (1.2 * (model.size / 8)), model: model),
-                      onDragCompleted: () {},
-                      data: [
-                        squareName,
-                        model.game.get(squareName).type.toUpperCase(),
-                        model.game.get(squareName).color,
-                      ],
-                    )
-                  : Container();
+              final piece = model.game.get(squareName);
+              if (piece == null) {
+                return Container();
+              } else if (model.game.turn != piece.color || !model.isInFront) {
+                return _getImageToDisplay(size: model.size / 8, model: model);
+              }
+              return Draggable(
+                child: _getImageToDisplay(size: model.size / 8, model: model),
+                childWhenDragging: Container(),
+                feedback: _getImageToDisplay(
+                    size: (1.2 * (model.size / 8)), model: model),
+                onDragCompleted: () {},
+                data: [
+                  squareName,
+                  model.game.get(squareName).type.toUpperCase(),
+                  model.game.get(squareName).color,
+                ],
+              );
             },
             onWillAccept: (willAccept) {
               return model.enableUserMoves ? true : false;
@@ -62,7 +66,11 @@ class BoardSquare extends StatelessWidget {
               }
               if (model.game.turn != moveColor) {
                 final history = model.game.getHistory();
-                model.onMove((history as List).last);
+                final move = (history as List).last;
+                if (model.movesOnlyThroughController) {
+                  model.game.undo_move();
+                }
+                model.onMove(move);
               }
               model.refreshBoard();
             },

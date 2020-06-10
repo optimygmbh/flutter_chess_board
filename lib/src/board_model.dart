@@ -33,6 +33,9 @@ class BoardModel extends Model {
   /// User moves can be enabled or disabled by this property
   bool enableUserMoves;
 
+  /// Moves can only be done through the controller
+  bool movesOnlyThroughController;
+
   /// Creates a logical game
   chess.Chess game = chess.Chess();
 
@@ -53,16 +56,56 @@ class BoardModel extends Model {
     notifyListeners();
   }
 
+  List<String> stepDifference = [];
+
+  List<String> get history {
+    final history = List<String>.from(game.getHistory());
+    return history..addAll(stepDifference);
+  }
+
+  bool get isInFront => stepDifference.isEmpty;
+
+  /// if it was not possible to step back
+  bool stepBack() {
+    final history = List<String>.from(game.getHistory());
+    if (history.isEmpty) {
+      return false;
+    }
+    stepDifference.insert(0, history.last);
+    game.undo_move();
+    refreshBoard();
+    return true;
+  }
+
+  /// if it was not possible to step forward
+  bool stepForward() {
+    if (isInFront) {
+      return false;
+    }
+    game.move(stepDifference.removeAt(0));
+    refreshBoard();
+    return true;
+  }
+
+  /// step forwart till is in front
+  void stepToFront() {
+    while (!isInFront) {
+      stepForward();
+    }
+  }
+
   BoardModel(
-      this.size,
-      this.onMove,
-      this.onCheckMate,
-      this.onCheck,
-      this.onDraw,
-      this.whiteSideTowardsUser,
-      this.chessBoardController,
-      this.enableUserMoves) {
+    this.size,
+    this.onMove,
+    this.onCheckMate,
+    this.onCheck,
+    this.onDraw,
+    this.whiteSideTowardsUser,
+    this.chessBoardController,
+    this.enableUserMoves,
+    this.movesOnlyThroughController,
+  ) {
     chessBoardController?.game = game;
-    chessBoardController?.refreshBoard = refreshBoard;
+    chessBoardController?.boardModel = this;
   }
 }
