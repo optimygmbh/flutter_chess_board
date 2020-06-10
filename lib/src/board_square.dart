@@ -8,7 +8,7 @@ import 'package:chess/chess.dart' as chess;
 /// A single square on the chessboard
 class BoardSquare extends StatelessWidget {
   /// The square name (a2, d3, e4, etc.)
-  final squareName;
+  final String squareName;
 
   BoardSquare({this.squareName});
 
@@ -21,16 +21,41 @@ class BoardSquare extends StatelessWidget {
           child: DragTarget(
             builder: (context, accepted, rejected) {
               final piece = model.game.get(squareName);
-              if (piece == null) {
-                return Container();
-              } else if (model.game.turn != piece.color || !model.isInFront) {
-                return _getImageToDisplay(size: model.size / 8, model: model);
+
+              bool isAccepted = false;
+
+              if (accepted.isNotEmpty &&
+                  (accepted.first as List).first != squareName) {
+                isAccepted = true;
+              }
+
+              /// Dont make dragable if:
+              /// Color of piece is not on turn
+              /// user moves are disabled
+              ///
+              if (model.game.turn != piece?.color ||
+                  !model.isInFront ||
+                  !model.enableUserMoves) {
+                return getSquare(
+                  model: model,
+                  isAccepted: isAccepted,
+                );
               }
               return Draggable(
-                child: _getImageToDisplay(size: model.size / 8, model: model),
-                childWhenDragging: Container(),
-                feedback: _getImageToDisplay(
-                    size: (1.2 * (model.size / 8)), model: model),
+                child: getSquare(
+                  model: model,
+                  isAccepted: isAccepted,
+                ),
+                childWhenDragging: getSquare(
+                  model: model,
+                  showPiece: false,
+                  isAccepted: isAccepted,
+                ),
+                feedback: getSquare(
+                  model: model,
+                  isDraging: true,
+                  isAccepted: isAccepted,
+                ),
                 onDragCompleted: () {},
                 data: [
                   squareName,
@@ -39,7 +64,7 @@ class BoardSquare extends StatelessWidget {
                 ],
               );
             },
-            onWillAccept: (willAccept) {
+            onWillAccept: (List<dynamic> willAccept) {
               return model.enableUserMoves ? true : false;
             },
             onAccept: (List moveInfo) async {
@@ -124,63 +149,81 @@ class BoardSquare extends StatelessWidget {
     });
   }
 
-  /// Get image to display on square
-  Widget _getImageToDisplay({double size, BoardModel model}) {
-    Widget imageToDisplay = Container();
+  Widget getSquare({
+    @required BoardModel model,
+    bool isDraging = false,
+    bool showPiece = true,
+    bool isAccepted,
+  }) {
+    final piece = model.game.get(squareName);
 
-    if (model.game.get(squareName) == null) {
+    final squareNumber =
+        chess.Chess.SQUARES[squareName] + int.parse(squareName[1]);
+
+    Color squareColor = model.boardBlack;
+    if (squareNumber % 2 == 0) {
+      squareColor = model.boardWhite;
+    }
+    Color acceptedColor = Colors.transparent;
+    if (isAccepted == true) {
+      acceptedColor = Colors.black26;
+    }
+
+    return Stack(
+      children: [
+        Container(color: squareColor),
+        Container(color: acceptedColor),
+        showPiece
+            ? _getImageToDisplay(
+                piece: piece,
+                size: isDraging ? 1.2 * model.size / 8 : model.size / 8,
+              )
+            : Container(),
+      ],
+    );
+  }
+
+  /// Get image to display on square
+  Widget _getImageToDisplay({
+    @required chess.Piece piece,
+    @required double size,
+  }) {
+    if (piece == null) {
       return Container();
     }
 
-    String piece = model.game
-            .get(squareName)
-            .color
-            .toString()
-            .substring(0, 1)
-            .toUpperCase() +
-        model.game.get(squareName).type.toUpperCase();
-
-    switch (piece) {
-      case "WP":
-        imageToDisplay = WhitePawn(size: size);
-        break;
-      case "WR":
-        imageToDisplay = WhiteRook(size: size);
-        break;
-      case "WN":
-        imageToDisplay = WhiteKnight(size: size);
-        break;
-      case "WB":
-        imageToDisplay = WhiteBishop(size: size);
-        break;
-      case "WQ":
-        imageToDisplay = WhiteQueen(size: size);
-        break;
-      case "WK":
-        imageToDisplay = WhiteKing(size: size);
-        break;
-      case "BP":
-        imageToDisplay = BlackPawn(size: size);
-        break;
-      case "BR":
-        imageToDisplay = BlackRook(size: size);
-        break;
-      case "BN":
-        imageToDisplay = BlackKnight(size: size);
-        break;
-      case "BB":
-        imageToDisplay = BlackBishop(size: size);
-        break;
-      case "BQ":
-        imageToDisplay = BlackQueen(size: size);
-        break;
-      case "BK":
-        imageToDisplay = BlackKing(size: size);
-        break;
-      default:
-        imageToDisplay = WhitePawn(size: size);
+    if (piece.color == chess.Color.WHITE) {
+      switch (piece.type) {
+        case chess.PieceType.PAWN:
+          return WhitePawn(size: size);
+        case chess.PieceType.ROOK:
+          return WhiteRook(size: size);
+        case chess.PieceType.KNIGHT:
+          return WhiteKnight(size: size);
+        case chess.PieceType.BISHOP:
+          return WhiteBishop(size: size);
+        case chess.PieceType.QUEEN:
+          return WhiteQueen(size: size);
+        case chess.PieceType.KING:
+          return WhiteKing(size: size);
+      }
+    } else if (piece.color == chess.Color.BLACK) {
+      switch (piece.type) {
+        case chess.PieceType.PAWN:
+          return BlackPawn(size: size);
+        case chess.PieceType.ROOK:
+          return BlackRook(size: size);
+        case chess.PieceType.KNIGHT:
+          return BlackKnight(size: size);
+        case chess.PieceType.BISHOP:
+          return BlackBishop(size: size);
+        case chess.PieceType.QUEEN:
+          return BlackQueen(size: size);
+        case chess.PieceType.KING:
+          return BlackKing(size: size);
+      }
     }
 
-    return imageToDisplay;
+    throw UnimplementedError();
   }
 }

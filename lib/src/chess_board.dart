@@ -121,11 +121,14 @@ class ChessBoard extends StatefulWidget {
   /// A boolean which checks if the user should be allowed to make moves
   final bool enableUserMoves;
 
-  /// The color type of the board
-  final BoardType boardType;
-
   /// Moves can only be done through the controller
   final bool movesOnlyThroughController;
+
+  final Color boardBlack;
+
+  final Color boardWhite;
+
+  final Color borderColor;
 
   ChessBoard({
     this.size = 200.0,
@@ -136,8 +139,10 @@ class ChessBoard extends StatefulWidget {
     @required this.onDraw,
     this.chessBoardController,
     this.enableUserMoves = true,
-    this.boardType = BoardType.brown,
     this.movesOnlyThroughController = false,
+    this.boardWhite = Colors.white,
+    this.boardBlack = Colors.brown,
+    this.borderColor = Colors.black,
   });
 
   @override
@@ -146,6 +151,8 @@ class ChessBoard extends StatefulWidget {
 
 class _ChessBoardState extends State<ChessBoard> {
   BoardModel boardModel;
+
+  static const double width = 3;
 
   @override
   void initState() {
@@ -159,6 +166,9 @@ class _ChessBoardState extends State<ChessBoard> {
       widget.chessBoardController,
       widget.enableUserMoves,
       widget.movesOnlyThroughController,
+      widget.boardWhite,
+      widget.boardBlack,
+      widget.borderColor,
     );
     super.initState();
   }
@@ -173,6 +183,9 @@ class _ChessBoardState extends State<ChessBoard> {
     boardModel.whiteSideTowardsUser = widget.whiteSideTowardsUser;
     boardModel.enableUserMoves = widget.enableUserMoves;
     boardModel.movesOnlyThroughController = widget.movesOnlyThroughController;
+    boardModel.boardWhite = widget.boardWhite;
+    boardModel.boardBlack = widget.boardBlack;
+    boardModel.borderColor = widget.borderColor;
     super.didUpdateWidget(oldWidget);
   }
 
@@ -180,76 +193,32 @@ class _ChessBoardState extends State<ChessBoard> {
   Widget build(BuildContext context) {
     return ScopedModel(
       model: boardModel,
-      child: Container(
-        height: widget.size,
-        width: widget.size,
-        child: Stack(
-          children: <Widget>[
-            Container(
-              height: widget.size,
-              width: widget.size,
-              child: _getBoardImage(),
+      child: Center(
+        child: Container(
+          foregroundDecoration: BoxDecoration(
+            border: Border.all(
+              color: boardModel.borderColor,
+              width: width,
             ),
-            //Overlaying draggables/ dragTargets onto the squares
-            Center(
-              child: Container(
-                height: widget.size,
-                width: widget.size,
-                child: buildChessBoard(),
-              ),
-            ),
-          ],
+          ),
+          height: widget.size,
+          width: widget.size,
+          padding: EdgeInsets.all(width),
+          child: Column(
+            children: widget.whiteSideTowardsUser
+                ? whiteSquareList.map((row) {
+                    return ChessBoardRank(
+                      children: row,
+                    );
+                  }).toList()
+                : whiteSquareList.reversed.map((row) {
+                    return ChessBoardRank(
+                      children: row.reversed.toList(),
+                    );
+                  }).toList(),
+          ),
         ),
       ),
     );
-  }
-
-  /// Builds the board
-  Widget buildChessBoard() {
-    return Column(
-      children: widget.whiteSideTowardsUser
-          ? whiteSquareList.map((row) {
-              return ChessBoardRank(
-                children: row,
-              );
-            }).toList()
-          : whiteSquareList.reversed.map((row) {
-              return ChessBoardRank(
-                children: row.reversed.toList(),
-              );
-            }).toList(),
-    );
-  }
-
-  /// Returns the board image
-  Image _getBoardImage() {
-    switch (widget.boardType) {
-      case BoardType.brown:
-        return Image.asset(
-          "images/brown_board.png",
-          package: 'flutter_chess_board',
-          fit: BoxFit.cover,
-        );
-      case BoardType.darkBrown:
-        return Image.asset(
-          "images/dark_brown_board.png",
-          package: 'flutter_chess_board',
-          fit: BoxFit.cover,
-        );
-      case BoardType.green:
-        return Image.asset(
-          "images/green_board.png",
-          package: 'flutter_chess_board',
-          fit: BoxFit.cover,
-        );
-      case BoardType.orange:
-        return Image.asset(
-          "images/orange_board.png",
-          package: 'flutter_chess_board',
-          fit: BoxFit.cover,
-        );
-      default:
-        return null;
-    }
   }
 }

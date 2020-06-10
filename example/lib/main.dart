@@ -68,7 +68,6 @@ class _MyHomePageState extends State<MyHomePage> {
               onDraw: () {},
               size: MediaQuery.of(context).size.width,
               enableUserMoves: true,
-              boardType: BoardType.green,
               chessBoardController: chessBoardController,
               movesOnlyThroughController: movesOnlyThroughController,
             ),

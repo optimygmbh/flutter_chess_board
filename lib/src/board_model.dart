@@ -36,6 +36,12 @@ class BoardModel extends Model {
   /// Moves can only be done through the controller
   bool movesOnlyThroughController;
 
+  Color boardBlack;
+
+  Color boardWhite;
+
+  Color borderColor;
+
   /// Creates a logical game
   chess.Chess game = chess.Chess();
 
@@ -104,6 +110,9 @@ class BoardModel extends Model {
     this.chessBoardController,
     this.enableUserMoves,
     this.movesOnlyThroughController,
+    this.boardWhite,
+    this.boardBlack,
+    this.borderColor,
   ) {
     chessBoardController?.game = game;
     chessBoardController?.boardModel = this;
