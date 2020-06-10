@@ -39,7 +39,11 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: Icon(Icons.access_alarm),
             onPressed: () => chessBoardController.makeMoveSAN('d5'),
-          )
+          ),
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () => setState(() => {}),
+          ),
         ],
       ),
       body: Center(

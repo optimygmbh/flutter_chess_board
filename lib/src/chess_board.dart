@@ -141,19 +141,27 @@ class ChessBoard extends StatefulWidget {
 }
 
 class _ChessBoardState extends State<ChessBoard> {
+  BoardModel boardModel;
+
+  @override
+  void initState() {
+    boardModel = BoardModel(
+      widget.size,
+      widget.onMove,
+      widget.onCheckMate,
+      widget.onCheck,
+      widget.onDraw,
+      widget.whiteSideTowardsUser,
+      widget.chessBoardController,
+      widget.enableUserMoves,
+    );
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScopedModel(
-      model: BoardModel(
-        widget.size,
-        widget.onMove,
-        widget.onCheckMate,
-        widget.onCheck,
-        widget.onDraw,
-        widget.whiteSideTowardsUser,
-        widget.chessBoardController,
-        widget.enableUserMoves,
-      ),
+      model: boardModel,
       child: Container(
         height: widget.size,
         width: widget.size,
@@ -171,7 +179,7 @@ class _ChessBoardState extends State<ChessBoard> {
                 width: widget.size,
                 child: buildChessBoard(),
               ),
-            )
+            ),
           ],
         ),
       ),
