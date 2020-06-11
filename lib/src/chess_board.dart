@@ -110,7 +110,7 @@ class ChessBoard extends StatefulWidget {
   final CheckCallback onCheck;
 
   /// Callback for when the game is a draw
-  final VoidCallback onDraw;
+  final DrawCallback onDraw;
 
   /// A boolean which notes if white board side is towards users
   final bool whiteSideTowardsUser;

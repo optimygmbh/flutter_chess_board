@@ -7,6 +7,8 @@ import 'package:chess/chess.dart' as chess;
 typedef void MoveCallback(String moveNotation);
 typedef void CheckMateCallback(PieceColor color);
 typedef void CheckCallback(PieceColor color);
+typedef void DrawCallback(bool draw, bool stalemate, bool threefoldRepetition,
+    bool insufficientMaterial);
 
 class BoardModel extends Model {
   /// The size of the board (The board is a square)
@@ -22,7 +24,7 @@ class BoardModel extends Model {
   CheckCallback onCheck;
 
   /// Callback for when the game is a draw (Example: K v K)
-  VoidCallback onDraw;
+  DrawCallback onDraw;
 
   /// If the white side of the board is towards the user
   bool whiteSideTowardsUser;
@@ -54,7 +56,8 @@ class BoardModel extends Model {
         game.in_stalemate ||
         game.in_threefold_repetition ||
         game.insufficient_material) {
-      onDraw();
+      onDraw(game.in_draw, game.in_stalemate, game.in_threefold_repetition,
+          game.insufficient_material);
     } else if (game.in_check) {
       onCheck(
           game.turn == chess.Color.WHITE ? PieceColor.White : PieceColor.Black);
@@ -69,7 +72,15 @@ class BoardModel extends Model {
     return history..addAll(stepDifference);
   }
 
+  bool get isFirst => history.isEmpty;
   bool get isInFront => stepDifference.isEmpty;
+
+  /// step back until first
+  void stepFirst() {
+    while (!isFirst) {
+      stepBack();
+    }
+  }
 
   /// if it was not possible to step back
   bool stepBack() {

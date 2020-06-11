@@ -80,6 +80,12 @@ class ChessBoardController {
     throw Exception("Controller not attached to a ChessBoard widget!");
   }
 
+  void stepFirst() {
+    boardModel == null
+        ? this._throwNotAttachedException()
+        : boardModel.stepFirst();
+  }
+
   void stepBack() {
     boardModel == null
         ? this._throwNotAttachedException()
