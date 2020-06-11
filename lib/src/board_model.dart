@@ -4,11 +4,17 @@ import 'package:flutter_chess_board/src/chess_board_controller.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:chess/chess.dart' as chess;
 
+enum DrawType {
+  stalemate,
+  threefoldRepetition,
+  insufficienMaterial,
+  unknown,
+}
+
 typedef void MoveCallback(String moveNotation);
 typedef void CheckMateCallback(PieceColor color);
 typedef void CheckCallback(PieceColor color);
-typedef void DrawCallback(bool draw, bool stalemate, bool threefoldRepetition,
-    bool insufficientMaterial);
+typedef void DrawCallback(DrawType drawType);
 
 class BoardModel extends Model {
   /// The size of the board (The board is a square)
@@ -52,12 +58,14 @@ class BoardModel extends Model {
     if (game.in_checkmate) {
       onCheckMate(
           game.turn == chess.Color.WHITE ? PieceColor.White : PieceColor.Black);
-    } else if (game.in_draw ||
-        game.in_stalemate ||
-        game.in_threefold_repetition ||
-        game.insufficient_material) {
-      onDraw(game.in_draw, game.in_stalemate, game.in_threefold_repetition,
-          game.insufficient_material);
+    } else if (game.in_stalemate) {
+      onDraw(DrawType.stalemate);
+    } else if (game.in_threefold_repetition) {
+      onDraw(DrawType.threefoldRepetition);
+    } else if (game.insufficient_material) {
+      onDraw(DrawType.insufficienMaterial);
+    } else if (game.in_draw) {
+      onDraw(DrawType.unknown);
     } else if (game.in_check) {
       onCheck(
           game.turn == chess.Color.WHITE ? PieceColor.White : PieceColor.Black);

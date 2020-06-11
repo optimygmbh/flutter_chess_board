@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onCheckMate: (color) {
                 print(color);
               },
-              onDraw: (_, __, ___, ____) {},
+              onDraw: (_) {},
               size: MediaQuery.of(context).size.width,
               enableUserMoves: true,
               chessBoardController: chessBoardController,
