@@ -73,12 +73,11 @@ class BoardModel extends Model {
     return history..addAll(stepDifference);
   }
 
-  bool get isFirst => history.isEmpty;
   bool get isInFront => stepDifference.isEmpty;
 
   /// step back until first
   void stepFirst() {
-    while (!isFirst) {
+    while (!List<String>.from(game.getHistory()).isEmpty) {
       stepBack();
     }
   }
