@@ -4,6 +4,13 @@ import 'package:flutter_chess_board/src/board_rank.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'chess_board_controller.dart';
 
+enum DrawType {
+  stalemate,
+  threefoldRepetition,
+  insufficienMaterial,
+  unknown,
+}
+
 var whiteSquareList = [
   [
     "a8",
@@ -86,14 +93,6 @@ var whiteSquareList = [
     "h1",
   ],
 ];
-
-/// Enum which stores board types
-enum BoardType {
-  brown,
-  darkBrown,
-  orange,
-  green,
-}
 
 /// The Chessboard Widget
 class ChessBoard extends StatefulWidget {
