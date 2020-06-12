@@ -8,7 +8,8 @@ homepage: https://www.github.com/deven98/flutter_chess_board
 dependencies:
   chess:
     git: https://github.com/optimygmbh/chess.dart.git
-  chess_vectors_flutter: ">=1.0.6 <2.0.0"
+  chess_vectors_flutter:
+    git: https://github.com/optimygmbh/chess_vectors_flutter.git
   scoped_model: ">=1.0.0 <2.0.0"
 
   flutter:

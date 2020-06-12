@@ -34,9 +34,11 @@ packages:
   chess_vectors_flutter:
     dependency: transitive
     description:
-      name: chess_vectors_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "90cae20eac5994472a444f343541e3a44ba197e9"
+      url: "https://github.com/optimygmbh/chess_vectors_flutter.git"
+    source: git
     version: "1.0.12"
   clock:
     dependency: transitive

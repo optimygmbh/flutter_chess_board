@@ -132,25 +132,25 @@ class ChessBoardController {
 
   /// Gets respective piece
   chess.Piece _getPiece(PieceType piece, PieceColor color) {
-    chess.Color _getColor(PieceColor color) {
-      return color == PieceColor.White ? chess.Color.WHITE : chess.Color.BLACK;
-    }
-
     switch (piece) {
       case PieceType.Bishop:
-        return chess.Piece(chess.PieceType.BISHOP, _getColor(color));
+        return chess.Piece(chess.PieceType.BISHOP, getChessColor(color));
       case PieceType.Queen:
-        return chess.Piece(chess.PieceType.QUEEN, _getColor(color));
+        return chess.Piece(chess.PieceType.QUEEN, getChessColor(color));
       case PieceType.King:
-        return chess.Piece(chess.PieceType.KING, _getColor(color));
+        return chess.Piece(chess.PieceType.KING, getChessColor(color));
       case PieceType.Knight:
-        return chess.Piece(chess.PieceType.KNIGHT, _getColor(color));
+        return chess.Piece(chess.PieceType.KNIGHT, getChessColor(color));
       case PieceType.Pawn:
-        return chess.Piece(chess.PieceType.PAWN, _getColor(color));
+        return chess.Piece(chess.PieceType.PAWN, getChessColor(color));
       case PieceType.Rook:
-        return chess.Piece(chess.PieceType.ROOK, _getColor(color));
+        return chess.Piece(chess.PieceType.ROOK, getChessColor(color));
     }
 
     return chess.Piece(chess.PieceType.PAWN, chess.Color.WHITE);
+  }
+
+  chess.Color getChessColor(PieceColor color) {
+    return color == PieceColor.White ? chess.Color.WHITE : chess.Color.BLACK;
   }
 }
