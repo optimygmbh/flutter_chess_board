@@ -52,24 +52,25 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ChessBoard(
-              onMove: (move) {
-                if (movesOnlyThroughController) {
-                  chessBoardController.makeMoveSAN(move);
-                }
-                print(move);
-              },
-              onCheck: (color) {
-                print(color);
-              },
-              onCheckMate: (color) {
-                print(color);
-              },
-              onDraw: (_) {},
-              size: MediaQuery.of(context).size.width,
-              enableUserMoves: true,
-              chessBoardController: chessBoardController,
-              movesOnlyThroughController: movesOnlyThroughController,
+            Container(
+              child: ChessBoard(
+                onMove: (move) {
+                  if (movesOnlyThroughController) {
+                    chessBoardController.makeMoveSAN(move);
+                  }
+                  print(move);
+                },
+                onCheck: (color) {
+                  print(color);
+                },
+                onCheckMate: (color) {
+                  print(color);
+                },
+                onDraw: (_) {},
+                enableUserMoves: true,
+                chessBoardController: chessBoardController,
+                movesOnlyThroughController: movesOnlyThroughController,
+              ),
             ),
             Row(
               children: [

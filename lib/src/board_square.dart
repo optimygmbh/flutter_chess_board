@@ -9,8 +9,12 @@ import 'package:chess/chess.dart' as chess;
 class BoardSquare extends StatelessWidget {
   /// The square name (a2, d3, e4, etc.)
   final String squareName;
+  final double size;
 
-  BoardSquare({this.squareName});
+  BoardSquare({
+    @required this.squareName,
+    @required this.size,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +180,7 @@ class BoardSquare extends StatelessWidget {
         showPiece
             ? _getImageToDisplay(
                 piece: piece,
-                size: isDraging ? 1.2 * model.size / 8 : model.size / 8,
+                size: isDraging ? 1.2 * size : size,
               )
             : Container(),
       ],

@@ -10,9 +10,6 @@ typedef void CheckCallback(PieceColor color);
 typedef void DrawCallback(DrawType drawType);
 
 class BoardModel extends Model {
-  /// The size of the board (The board is a square)
-  double size;
-
   /// Callback for when a move is made
   MoveCallback onMove;
 
@@ -112,7 +109,6 @@ class BoardModel extends Model {
   }
 
   BoardModel(
-    this.size,
     this.onMove,
     this.onCheckMate,
     this.onCheck,

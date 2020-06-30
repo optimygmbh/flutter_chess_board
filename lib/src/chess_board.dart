@@ -96,9 +96,6 @@ var whiteSquareList = [
 
 /// The Chessboard Widget
 class ChessBoard extends StatefulWidget {
-  /// Size of chessboard
-  final double size;
-
   /// Callback for when move is made
   final MoveCallback onMove;
 
@@ -130,7 +127,6 @@ class ChessBoard extends StatefulWidget {
   final Color borderColor;
 
   ChessBoard({
-    this.size = 200.0,
     this.whiteSideTowardsUser = true,
     @required this.onMove,
     @required this.onCheckMate,
@@ -156,7 +152,6 @@ class _ChessBoardState extends State<ChessBoard> {
   @override
   void initState() {
     boardModel = BoardModel(
-      widget.size,
       widget.onMove,
       widget.onCheckMate,
       widget.onCheck,
@@ -174,7 +169,6 @@ class _ChessBoardState extends State<ChessBoard> {
 
   @override
   void didUpdateWidget(ChessBoard oldWidget) {
-    boardModel.size = widget.size;
     boardModel.onMove = widget.onMove;
     boardModel.onCheckMate = widget.onCheckMate;
     boardModel.onCheck = widget.onCheck;
@@ -192,7 +186,8 @@ class _ChessBoardState extends State<ChessBoard> {
   Widget build(BuildContext context) {
     return ScopedModel(
       model: boardModel,
-      child: Center(
+      child: AspectRatio(
+        aspectRatio: 1,
         child: Container(
           foregroundDecoration: BoxDecoration(
             border: Border.all(
@@ -200,8 +195,6 @@ class _ChessBoardState extends State<ChessBoard> {
               width: width,
             ),
           ),
-          height: widget.size,
-          width: widget.size,
           padding: EdgeInsets.all(width),
           child: Column(
             children: widget.whiteSideTowardsUser

@@ -12,12 +12,19 @@ class ChessBoardRank extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       flex: 1,
-      child: Row(
-        children: children
-            .map(
-              (squareName) => BoardSquare(squareName: squareName),
-            )
-            .toList(),
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return Row(
+            children: children
+                .map(
+                  (squareName) => BoardSquare(
+                    squareName: squareName,
+                    size: constraints.maxHeight,
+                  ),
+                )
+                .toList(),
+          );
+        },
       ),
     );
   }
