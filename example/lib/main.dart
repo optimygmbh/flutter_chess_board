@@ -51,26 +51,25 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Container(
-              child: ChessBoard(
-                onMove: (move) {
-                  if (movesOnlyThroughController) {
-                    chessBoardController.makeMoveSAN(move);
-                  }
-                  print(move);
-                },
-                onCheck: (color) {
-                  print(color);
-                },
-                onCheckMate: (color) {
-                  print(color);
-                },
-                onDraw: (_) {},
-                enableUserMoves: true,
-                chessBoardController: chessBoardController,
-                movesOnlyThroughController: movesOnlyThroughController,
-              ),
+            ChessBoard(
+              onMove: (move) {
+                if (movesOnlyThroughController) {
+                  chessBoardController.makeMoveSAN(move);
+                }
+                print(move);
+              },
+              onCheck: (color) {
+                print(color);
+              },
+              onCheckMate: (color) {
+                print(color);
+              },
+              onDraw: (_) {},
+              enableUserMoves: true,
+              chessBoardController: chessBoardController,
+              movesOnlyThroughController: movesOnlyThroughController,
             ),
             Row(
               children: [

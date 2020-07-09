@@ -13,6 +13,9 @@ class BoardModel extends Model {
   /// Callback for when a move is made
   MoveCallback onMove;
 
+  /// Callback for when a move has been declined
+  VoidCallback onMoveDeclined;
+
   /// Callback for when a player is checkmated
   CheckMateCallback onCheckMate;
 
@@ -39,6 +42,8 @@ class BoardModel extends Model {
   Color boardWhite;
 
   Color borderColor;
+
+  Color lastMoveColor;
 
   /// Creates a logical game
   chess.Chess game = chess.Chess();
@@ -110,6 +115,7 @@ class BoardModel extends Model {
 
   BoardModel(
     this.onMove,
+    this.onMoveDeclined,
     this.onCheckMate,
     this.onCheck,
     this.onDraw,
@@ -120,6 +126,7 @@ class BoardModel extends Model {
     this.boardWhite,
     this.boardBlack,
     this.borderColor,
+    this.lastMoveColor,
   ) {
     chessBoardController?.game = game;
     chessBoardController?.boardModel = this;

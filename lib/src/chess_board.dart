@@ -99,6 +99,9 @@ class ChessBoard extends StatefulWidget {
   /// Callback for when move is made
   final MoveCallback onMove;
 
+  /// Callback for when move is made
+  final VoidCallback onMoveDeclined;
+
   /// Callback for when a player is checkmated
   final CheckMateCallback onCheckMate;
 
@@ -126,18 +129,22 @@ class ChessBoard extends StatefulWidget {
 
   final Color borderColor;
 
+  final Color lastMoveColor;
+
   ChessBoard({
     this.whiteSideTowardsUser = true,
     @required this.onMove,
     @required this.onCheckMate,
     @required this.onCheck,
     @required this.onDraw,
+    this.onMoveDeclined,
     this.chessBoardController,
     this.enableUserMoves = true,
     this.movesOnlyThroughController = false,
     this.boardWhite = Colors.white,
     this.boardBlack = Colors.brown,
     this.borderColor = Colors.black,
+    this.lastMoveColor,
   });
 
   @override
@@ -153,6 +160,7 @@ class _ChessBoardState extends State<ChessBoard> {
   void initState() {
     boardModel = BoardModel(
       widget.onMove,
+      widget.onMoveDeclined,
       widget.onCheckMate,
       widget.onCheck,
       widget.onDraw,
@@ -163,6 +171,7 @@ class _ChessBoardState extends State<ChessBoard> {
       widget.boardWhite,
       widget.boardBlack,
       widget.borderColor,
+      widget.lastMoveColor,
     );
     super.initState();
   }
@@ -170,6 +179,7 @@ class _ChessBoardState extends State<ChessBoard> {
   @override
   void didUpdateWidget(ChessBoard oldWidget) {
     boardModel.onMove = widget.onMove;
+    boardModel.onMoveDeclined = widget.onMoveDeclined;
     boardModel.onCheckMate = widget.onCheckMate;
     boardModel.onCheck = widget.onCheck;
     boardModel.onDraw = widget.onDraw;
@@ -179,6 +189,7 @@ class _ChessBoardState extends State<ChessBoard> {
     boardModel.boardWhite = widget.boardWhite;
     boardModel.boardBlack = widget.boardBlack;
     boardModel.borderColor = widget.borderColor;
+    boardModel.lastMoveColor = widget.lastMoveColor;
     super.didUpdateWidget(oldWidget);
   }
 
@@ -198,16 +209,20 @@ class _ChessBoardState extends State<ChessBoard> {
           padding: EdgeInsets.all(width),
           child: Column(
             children: widget.whiteSideTowardsUser
-                ? whiteSquareList.map((row) {
-                    return ChessBoardRank(
-                      children: row,
-                    );
-                  }).toList()
-                : whiteSquareList.reversed.map((row) {
-                    return ChessBoardRank(
-                      children: row.reversed.toList(),
-                    );
-                  }).toList(),
+                ? whiteSquareList.map(
+                    (row) {
+                      return ChessBoardRank(
+                        children: row,
+                      );
+                    },
+                  ).toList()
+                : whiteSquareList.reversed.map(
+                    (row) {
+                      return ChessBoardRank(
+                        children: row.reversed.toList(),
+                      );
+                    },
+                  ).toList(),
           ),
         ),
       ),

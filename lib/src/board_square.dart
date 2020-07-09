@@ -72,18 +72,10 @@ class BoardSquare extends StatelessWidget {
               return model.enableUserMoves ? true : false;
             },
             onAccept: (List moveInfo) async {
-              // A way to check if move occurred.
-              chess.Color moveColor = model.game.turn;
-
-              if (moveInfo[1] == "P" &&
-                  ((moveInfo[0][1] == "7" &&
-                          squareName[1] == "8" &&
-                          moveInfo[2] == chess.Color.WHITE) ||
-                      (moveInfo[0][1] == "2" &&
-                          squareName[1] == "1" &&
-                          moveInfo[2] == chess.Color.BLACK))) {
+              bool moveAccepted = false;
+              if (pawnReachesOtherSide(moveInfo)) {
                 final promotion = await _promotionDialog(context);
-                model.game.move(
+                moveAccepted = model.game.move(
                   {
                     "from": moveInfo[0],
                     "to": squareName,
@@ -91,22 +83,35 @@ class BoardSquare extends StatelessWidget {
                   },
                 );
               } else {
-                model.game.move({"from": moveInfo[0], "to": squareName});
+                moveAccepted =
+                    model.game.move({"from": moveInfo[0], "to": squareName});
               }
-              if (model.game.turn != moveColor) {
+              if (moveAccepted) {
                 final history = model.game.getHistory();
                 final move = (history as List).last;
                 if (model.movesOnlyThroughController) {
                   model.game.undo_move();
                 }
                 model.onMove(move);
+                model.refreshBoard();
+              } else {
+                model.onMoveDeclined?.call();
               }
-              model.refreshBoard();
             },
           ),
         );
       },
     );
+  }
+
+  bool pawnReachesOtherSide(List moveInfo) {
+    return moveInfo[1] == "P" &&
+        ((moveInfo[0][1] == "7" &&
+                squareName[1] == "8" &&
+                moveInfo[2] == chess.Color.WHITE) ||
+            (moveInfo[0][1] == "2" &&
+                squareName[1] == "1" &&
+                moveInfo[2] == chess.Color.BLACK));
   }
 
   /// Show dialog when pawn reaches last square
@@ -168,23 +173,30 @@ class BoardSquare extends StatelessWidget {
     if (squareNumber % 2 == 0) {
       squareColor = model.boardWhite;
     }
-    Color acceptedColor = Colors.transparent;
-    if (isAccepted == true) {
-      acceptedColor = Colors.black26;
+
+    Color lastMoveColor = Colors.transparent;
+    if (showPiece == false || isAccepted || lastMoveInvolvedSquare(model)) {
+      lastMoveColor = model.lastMoveColor ?? Colors.green.withOpacity(0.5);
     }
 
     return Stack(
       children: [
         Container(color: squareColor),
-        Container(color: acceptedColor),
+        Container(color: lastMoveColor),
         showPiece
             ? _getImageToDisplay(
                 piece: piece,
-                size: isDraging ? 1.2 * size : size,
+                size: isDraging ? 1.5 * size : size,
               )
             : Container(),
       ],
     );
+  }
+
+  bool lastMoveInvolvedSquare(BoardModel model) {
+    return model.game.history.isNotEmpty &&
+        (model.game.history.last.move.fromAlgebraic == squareName ||
+            model.game.history.last.move.toAlgebraic == squareName);
   }
 
   /// Get image to display on square
