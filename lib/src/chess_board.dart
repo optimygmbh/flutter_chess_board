@@ -134,9 +134,9 @@ class ChessBoard extends StatefulWidget {
   ChessBoard({
     this.whiteSideTowardsUser = true,
     @required this.onMove,
-    @required this.onCheckMate,
-    @required this.onCheck,
-    @required this.onDraw,
+    this.onCheckMate,
+    this.onCheck,
+    this.onDraw,
     this.onMoveDeclined,
     this.chessBoardController,
     this.enableUserMoves = true,
