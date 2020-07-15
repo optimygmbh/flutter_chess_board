@@ -1,4 +1,5 @@
 import 'package:chess/chess.dart' as chess;
+import 'package:flutter_chess_board/flutter_chess_board.dart';
 import 'package:flutter_chess_board/src/board_model.dart';
 
 enum PieceType { Pawn, Rook, Knight, Bishop, Queen, King }
@@ -6,6 +7,17 @@ enum PieceType { Pawn, Rook, Knight, Bishop, Queen, King }
 enum PieceColor {
   White,
   Black,
+}
+
+enum GameState {
+  nothing,
+  stalemate,
+  threefoldRepetition,
+  insufficienMaterial,
+  whiteCheck,
+  blackCheck,
+  whiteCheckmate,
+  blackCheckmate,
 }
 
 /// Controller for programmatically controlling the board
@@ -16,31 +28,36 @@ class ChessBoardController {
   BoardModel boardModel;
 
   /// Makes move on the board with San String
-  void makeMoveSAN(String san) {
+  GameState makeMoveSAN(String san) {
     boardModel.stepToFront();
     game?.move(san);
     boardModel == null
         ? this._throwNotAttachedException()
         : boardModel.refreshBoard();
+
+    return _getGameState();
   }
 
   /// Makes move on the board
-  void makeMove(String from, String to) {
+  GameState makeMove(String from, String to) {
     boardModel.stepToFront();
     game?.move({"from": from, "to": to});
     boardModel == null
         ? this._throwNotAttachedException()
         : boardModel.refreshBoard();
+    return _getGameState();
   }
 
   /// Makes move and promotes pawn to piece (from is a square like d4, to is also a square like e3, pieceToPromoteTo is a String like "Q".
   /// pieceToPromoteTo String will be changed to enum in a future update and this method will be deprecated in the future
-  void makeMoveWithPromotion(String from, String to, String pieceToPromoteTo) {
+  GameState makeMoveWithPromotion(
+      String from, String to, String pieceToPromoteTo) {
     boardModel.stepToFront();
     game?.move({"from": from, "to": to, "promotion": pieceToPromoteTo});
     boardModel == null
         ? this._throwNotAttachedException()
         : boardModel.refreshBoard();
+    return _getGameState();
   }
 
   /// Resets square
@@ -104,9 +121,10 @@ class ChessBoardController {
         : boardModel.stepToFront();
   }
 
-  void undoMove() {
+  GameState undoMove() {
     boardModel == null ? this._throwNotAttachedException() : game.undo_move();
     boardModel.refreshBoard();
+    return _getGameState();
   }
 
   List<String> get history {
@@ -152,5 +170,24 @@ class ChessBoardController {
 
   chess.Color getChessColor(PieceColor color) {
     return color == PieceColor.White ? chess.Color.WHITE : chess.Color.BLACK;
+  }
+
+  GameState _getGameState() {
+    if (game.in_checkmate) {
+      return game.turn == chess.Color.WHITE
+          ? GameState.whiteCheckmate
+          : GameState.blackCheckmate;
+    } else if (game.in_stalemate) {
+      return GameState.stalemate;
+    } else if (game.in_threefold_repetition) {
+      return GameState.threefoldRepetition;
+    } else if (game.insufficient_material) {
+      return GameState.insufficienMaterial;
+    } else if (game.in_check) {
+      return game.turn == chess.Color.WHITE
+          ? GameState.whiteCheck
+          : GameState.blackCheck;
+    }
+    return GameState.nothing;
   }
 }
