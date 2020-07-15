@@ -11,13 +11,12 @@ enum PieceColor {
 
 enum GameState {
   nothing,
+  captured,
   stalemate,
   threefoldRepetition,
-  insufficienMaterial,
-  whiteCheck,
-  blackCheck,
-  whiteCheckmate,
-  blackCheckmate,
+  insufficientMaterial,
+  check,
+  checkmate,
 }
 
 /// Controller for programmatically controlling the board
@@ -174,19 +173,18 @@ class ChessBoardController {
 
   GameState _getGameState() {
     if (game.in_checkmate) {
-      return game.turn == chess.Color.WHITE
-          ? GameState.whiteCheckmate
-          : GameState.blackCheckmate;
+      return GameState.checkmate;
     } else if (game.in_stalemate) {
       return GameState.stalemate;
     } else if (game.in_threefold_repetition) {
       return GameState.threefoldRepetition;
     } else if (game.insufficient_material) {
-      return GameState.insufficienMaterial;
+      return GameState.insufficientMaterial;
     } else if (game.in_check) {
-      return game.turn == chess.Color.WHITE
-          ? GameState.whiteCheck
-          : GameState.blackCheck;
+      return GameState.check;
+    } else if (game.history.isNotEmpty &&
+        game.history.last.move.captured != null) {
+      return GameState.captured;
     }
     return GameState.nothing;
   }
