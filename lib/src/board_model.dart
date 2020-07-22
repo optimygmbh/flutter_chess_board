@@ -51,18 +51,18 @@ class BoardModel extends Model {
   /// Refreshes board
   void refreshBoard() {
     if (game.in_checkmate) {
-      onCheckMate(
+      onCheckMate?.call(
           game.turn == chess.Color.WHITE ? PieceColor.White : PieceColor.Black);
     } else if (game.in_stalemate) {
-      onDraw(DrawType.stalemate);
+      onDraw?.call(DrawType.stalemate);
     } else if (game.in_threefold_repetition) {
-      onDraw(DrawType.threefoldRepetition);
+      onDraw?.call(DrawType.threefoldRepetition);
     } else if (game.insufficient_material) {
-      onDraw(DrawType.insufficienMaterial);
+      onDraw?.call(DrawType.insufficienMaterial);
     } else if (game.in_draw) {
-      onDraw(DrawType.unknown);
+      onDraw?.call(DrawType.unknown);
     } else if (game.in_check) {
-      onCheck(
+      onCheck?.call(
           game.turn == chess.Color.WHITE ? PieceColor.White : PieceColor.Black);
     }
     notifyListeners();
